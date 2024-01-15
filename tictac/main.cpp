@@ -136,9 +136,22 @@ int main(void)
 	InitWindow(WIDTH, HEIGHT, WINDOW_TITLE);
 	bool ai_turn = false;
 	bool game_in_progress = true;
+	Sound music;
+
+	InitAudioDevice();
+	if(IsAudioDeviceReady()) {
+		std::cout << "Audio device is ready" << std::endl;
+		Wave wav = LoadWave("tictac/resources/fun.wav");
+		music = LoadSoundFromWave(wav);
+		PlaySound(music);
+	}
 
 	while (!WindowShouldClose()) 
   {
+		if (!IsSoundPlaying(music)) {
+			PlaySound(music);
+		}
+
     BeginDrawing();
     ClearBackground(LIGHTGRAY);
     
@@ -214,6 +227,7 @@ int main(void)
 		DrawCircle(GetTouchX(), GetTouchY(), 8, LIME);
     EndDrawing();
   }
-  CloseWindow();
-  return 0;
+	CloseAudioDevice();
+	CloseWindow();
+	return 0;
 }

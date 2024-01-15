@@ -8,5 +8,6 @@ cc_binary(
     deps = [
       "@raylib",
     ],
+    data = ["resources/music.wav", "resources/fun.wav"],
     linkopts = ["-framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL"]
 )
