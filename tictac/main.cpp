@@ -184,9 +184,8 @@ int main(void)
     game_in_progress = (winner == Play::EMPTY) && is_game_in_progress(board);
 
     // Status Text
-    if (!game_in_progress)
+    if (!game_in_progress && (rand() % 6 != 2))
     {
-
       DrawText(
           "PRESS R TO\n\nRESTART",
           360, // pos X
