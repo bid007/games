@@ -3,6 +3,7 @@
 #include "box2d/box2d.h"
 #include "constants.h"
 #include "game_world.h"
+#include "contact_listener.h"
 
 int main()
 {
@@ -12,7 +13,9 @@ int main()
   // Setup Box2d and game app
   // -----------------------------------------
   b2Vec2 gravity(0.0f, 0.0f);
+  ArkanoidContactListner *c_listener = new ArkanoidContactListner();
   b2World world(gravity);
+  world.SetContactListener(c_listener);
 
   constexpr float timeStep = 1.0f / 60.0f;
   constexpr int32 velocityIterations = 6;
@@ -31,7 +34,7 @@ int main()
       app.apply_force_to_ball();
       start = true;
     }
-
+    app.move_bat();
     world.Step(timeStep, velocityIterations, positionIterations);
     // -----------------------------------------
 
@@ -43,4 +46,9 @@ int main()
     EndDrawing();
     // -----------------------------------------
   }
+
+  // Cleanup
+  // -----------------------------------------
+  delete c_listener;
+  // -----------------------------------------
 }

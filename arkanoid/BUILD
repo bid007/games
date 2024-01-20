@@ -3,6 +3,7 @@ cc_library (
   name = "lib",
   srcs = [
     "constants.h",
+    "contact_listener.h",
     "game_world.h",
     "game_world.cpp",
   ],

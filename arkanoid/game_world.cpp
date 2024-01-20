@@ -5,6 +5,7 @@ GameWorld::GameWorld(b2World *w)
   world = w;
   create_game_box();
   create_ball();
+  create_bat();
 }
 
 void GameWorld::create_game_box()
@@ -49,18 +50,50 @@ void GameWorld::create_ball()
   body_def.position.Set(50.0f, 40.0f);
   b2Body *body = world->CreateBody(&body_def);
 
-  // b2PolygonShape dynamic_box;
   b2CircleShape dynamic_box;
-  // dynamic_box.SetAsBox(1.0f, 1.0f);
   dynamic_box.m_radius = 2.0f;
   b2FixtureDef fixture_def;
   fixture_def.shape = &dynamic_box;
-  fixture_def.density = 1.5f;
+  fixture_def.density = 0.5f;
   fixture_def.friction = 0.0f;
   fixture_def.restitution = 1.0f;
   body->CreateFixture(&fixture_def);
   body->SetBullet(true);
   ball = body;
+}
+
+void GameWorld::create_bat()
+{
+  b2BodyDef bat_body_def;
+  bat_body_def.type = b2_dynamicBody;
+  bat_body_def.position.Set(300.0f, 400.0f);
+  b2Body *bat_body = world->CreateBody(&bat_body_def);
+  b2PolygonShape bat_box;
+  bat_box.SetAsBox(40.0f, 10.0f);
+  b2FixtureDef fixture;
+  fixture.shape = &bat_box;
+  fixture.density = 0.1f;
+  bat_body->CreateFixture(&fixture);
+  bat = bat_body;
+}
+
+void GameWorld::move_bat()
+{
+  if (IsKeyPressedRepeat(KEY_RIGHT) || IsKeyPressed(KEY_RIGHT))
+  {
+    std::cout << "Hey you move to the right man" << std::endl;
+    bat->ApplyForceToCenter(b2Vec2{100000, 0}, true);
+  }
+
+  if (IsKeyPressedRepeat(KEY_LEFT) || IsKeyPressed(KEY_LEFT))
+  {
+    std::cout << "Hey you move to the left man" << std::endl;
+    bat->ApplyForceToCenter(b2Vec2{-100000, 0}, true);
+  }
+  if (IsKeyReleased(KEY_RIGHT) || IsKeyReleased(KEY_LEFT))
+  {
+    bat->SetAwake(false);
+  }
 }
 
 void GameWorld::apply_force_to_ball()
@@ -70,11 +103,8 @@ void GameWorld::apply_force_to_ball()
 
 void GameWorld::draw()
 {
-  // Draw Ball
-  auto ball_pos = ball->GetPosition();
-  // std::cout << "Ball pos x: " << ball_pos.x << " pos y: " << ball_pos.y << std::endl;
-  DrawCircle(ball_pos.x, ball_pos.y, 10.0f, MAROON);
-
+  // Draw bounding box
+  // ------------------------------------
   // Top
   DrawRectangle(0, 0, 600, 2, MAROON);
   // Bottom
@@ -83,4 +113,15 @@ void GameWorld::draw()
   DrawRectangle(0, 0, 2, 400, MAROON);
   // Right
   DrawRectangle(598, 0, 2, 400, MAROON);
+  // ------------------------------------
+
+  // Draw Ball
+  auto ball_pos = ball->GetPosition();
+  // std::cout << "Ball pos x: " << ball_pos.x << " pos y: " << ball_pos.y << std::endl;
+  DrawCircle(ball_pos.x, ball_pos.y, 10.0f, MAROON);
+
+  // Draw Bat
+  auto bat_pos = bat->GetPosition();
+  // std::cout << "Bat pos x: " << bat_pos.x << " pos y: " << bat_pos.y << std::endl;
+  DrawRectangleGradientH(bat_pos.x - 40, bat_pos.y - 10, 80, 20, BLUE, GREEN);
 }
