@@ -11,7 +11,7 @@ int main()
 
   // Setup Box2d and game app
   // -----------------------------------------
-  b2Vec2 gravity(0.0f, 50.0f);
+  b2Vec2 gravity(0.0f, 0.0f);
   b2World world(gravity);
 
   constexpr float timeStep = 1.0f / 60.0f;
@@ -19,20 +19,26 @@ int main()
   constexpr int32 positionIterations = 2;
 
   auto app = GameWorld(&world);
+  bool start = false;
   // -----------------------------------------
 
   while (!WindowShouldClose())
   {
     // Update the world and its objects
     // -----------------------------------------
-    // app.update_bat();
+    if (!start)
+    {
+      app.apply_force_to_ball();
+      start = true;
+    }
+
     world.Step(timeStep, velocityIterations, positionIterations);
     // -----------------------------------------
 
     // Draw
     // -----------------------------------------
     BeginDrawing();
-    ClearBackground(MAROON);
+    ClearBackground(LIGHTGRAY);
     app.draw();
     EndDrawing();
     // -----------------------------------------

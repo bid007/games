@@ -9,51 +9,78 @@ GameWorld::GameWorld(b2World *w)
 
 void GameWorld::create_game_box()
 {
-  b2BodyDef groundBodyDef;
-  groundBodyDef.position.Set(300.0f, 380.0f);
-  b2Body *groundBody = world->CreateBody(&groundBodyDef);
-  b2PolygonShape groundBox;
-  groundBox.SetAsBox(300.0f, 10.0f);
-  groundBody->CreateFixture(&groundBox, 0.0f);
-  game_bodies.push_back(groundBody);
+  b2BodyDef ground_body_def;
+  ground_body_def.position.Set(300.0f, 392.0f);
+  b2Body *ground_body = world->CreateBody(&ground_body_def);
+  b2PolygonShape ground_box;
+  ground_box.SetAsBox(300.0f, 2.0f);
+  ground_body->CreateFixture(&ground_box, 0.0f);
+  walls[0] = ground_body;
+
+  b2BodyDef top_body_def;
+  top_body_def.position.Set(300.0f, 8.0f);
+  b2Body *top_body = world->CreateBody(&top_body_def);
+  b2PolygonShape top_box;
+  top_box.SetAsBox(300.0f, 2.0f);
+  top_body->CreateFixture(&top_box, 0.0f);
+  walls[1] = top_body;
+
+  b2BodyDef left_body_def;
+  left_body_def.position.Set(8.0f, 200.0f);
+  b2Body *left_body = world->CreateBody(&left_body_def);
+  b2PolygonShape left_box;
+  left_box.SetAsBox(2.0f, 200.0f);
+  left_body->CreateFixture(&left_box, 0.0f);
+  walls[2] = left_body;
+
+  b2BodyDef right_body_def;
+  right_body_def.position.Set(592.0f, 200.0f);
+  b2Body *right_body = world->CreateBody(&right_body_def);
+  b2PolygonShape right_box;
+  right_box.SetAsBox(2.0f, 200.0f);
+  right_body->CreateFixture(&right_box, 0.0f);
+  walls[3] = right_body;
 }
 
 void GameWorld::create_ball()
 {
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(50.0f, 40.0f);
-  b2Body *body = world->CreateBody(&bodyDef);
+  b2BodyDef body_def;
+  body_def.type = b2_dynamicBody;
+  body_def.position.Set(50.0f, 40.0f);
+  b2Body *body = world->CreateBody(&body_def);
 
-  b2PolygonShape dynamicBox;
-  dynamicBox.SetAsBox(1.0f, 1.0f);
-  b2FixtureDef fixtureDef;
-  fixtureDef.shape = &dynamicBox;
-  fixtureDef.density = 50.0f;
-  fixtureDef.friction = 0.3f;
-  fixtureDef.restitution = 0.9f;
-  body->CreateFixture(&fixtureDef);
+  // b2PolygonShape dynamic_box;
+  b2CircleShape dynamic_box;
+  // dynamic_box.SetAsBox(1.0f, 1.0f);
+  dynamic_box.m_radius = 2.0f;
+  b2FixtureDef fixture_def;
+  fixture_def.shape = &dynamic_box;
+  fixture_def.density = 1.5f;
+  fixture_def.friction = 0.0f;
+  fixture_def.restitution = 1.0f;
+  body->CreateFixture(&fixture_def);
+  body->SetBullet(true);
+  ball = body;
+}
 
-  game_bodies.push_back(body);
+void GameWorld::apply_force_to_ball()
+{
+  ball->ApplyForceToCenter(b2Vec2{5000000.0f, 6000000.0f}, true);
 }
 
 void GameWorld::draw()
 {
-  // Game world decorations
-  DrawRectangle(x_pos, y_pos, WIDTH, HEIGHT, bc);
-
   // Draw Ball
-  auto ball_pos = game_bodies[1]->GetPosition();
-  DrawCircle(ball_pos.x, ball_pos.y, 10.0f, WHITE);
+  auto ball_pos = ball->GetPosition();
+  // std::cout << "Ball pos x: " << ball_pos.x << " pos y: " << ball_pos.y << std::endl;
+  DrawCircle(ball_pos.x, ball_pos.y, 10.0f, MAROON);
 
-  // Draw Ground
-  DrawRectangle(0, 380, 600, 20, WHITE);
-}
-
-GameWorld::~GameWorld()
-{
-  for (auto &body : game_bodies)
-  {
-    world->DestroyBody(body);
-  }
+  // Top
+  DrawRectangle(0, 0, 600, 2, MAROON);
+  // Bottom
+  DrawRectangle(0, 398, 600, 2, MAROON);
+  // Left
+  DrawRectangle(0, 0, 2, 400, MAROON);
+  // Right
+  DrawRectangle(598, 0, 2, 400, MAROON);
 }
