@@ -1,5 +1,5 @@
-#include "box2d/box2d.h"
 #include <iostream>
+#include "box2d/box2d.h"
 
 class ArkanoidContactListner : public b2ContactListener
 {
@@ -21,21 +21,20 @@ public:
 
   void BeginContact(b2Contact *contact)
   {
-    std::cout << "Collison detected " << std::endl;
+    // std::cout << "Collison detected " << std::endl;
     auto fxa = contact->GetFixtureA();
     auto fxb = contact->GetFixtureB();
-
-    if ((is_wall(fxa) && is_bat(fxb)) || (is_wall(fxb) && is_bat(fxa)))
+    if (is_ball(fxa))
     {
-      std::cout << "Bat and wall collided" << std::endl;
-      if (is_bat(fxa))
-      {
-        fxa->GetBody()->SetAwake(false);
-      }
-      else
-      {
-        fxb->GetBody()->SetAwake(false);
-      }
+      uintptr_t d = fxa->GetUserData().pointer;
+      GameData *g = reinterpret_cast<GameData *>(d);
+      std::cout << "fxa Ball data is: " << g->type << std::endl;
+    }
+    if (is_ball(fxb))
+    {
+      uintptr_t d = fxb->GetUserData().pointer;
+      GameData *g = reinterpret_cast<GameData *>(d);
+      std::cout << "fxb Ball data is: " << g->type << std::endl;
     }
   }
 };

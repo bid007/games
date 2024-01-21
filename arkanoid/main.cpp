@@ -41,7 +41,7 @@ int main()
     // Draw
     // -----------------------------------------
     BeginDrawing();
-    ClearBackground(LIGHTGRAY);
+    ClearBackground(GRAY);
     app.draw();
     EndDrawing();
     // -----------------------------------------
