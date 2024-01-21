@@ -7,3 +7,10 @@
 bazel run //tictac:main
 ```
 ---
+ #### Run this simple arkanoid clone on M1 macs with the following bazel command.
+ ![Alt text](arkanoid/screenshots/arkanoid.png?raw=true "Arkanoid gamescreen")
+
+```
+bazel run //arkanoid:main
+```
+---

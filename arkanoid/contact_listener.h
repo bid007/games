@@ -5,11 +5,25 @@ class ArkanoidContactListner : public b2ContactListener
 {
 private:
   bool illegal_collision = false;
+  b2Body *brick_body = nullptr;
+  int score = 0;
 
 public:
   bool game_end()
   {
     return illegal_collision;
+  }
+
+  b2Body *collision_brick()
+  {
+    b2Body *tmp = brick_body;
+    brick_body = nullptr;
+    return tmp;
+  }
+
+  int get_score()
+  {
+    return score;
   }
 
   void BeginContact(b2Contact *contact)
@@ -33,5 +47,11 @@ public:
     {
       illegal_collision = true;
     }
+
+    if ((body_a_type & body_b_type) != 2)
+      return;
+
+    brick_body = (body_a_type == GameData::BRICK) ? fxa->GetBody() : fxb->GetBody();
+    score += 1;
   }
 };

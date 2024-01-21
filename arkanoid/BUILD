@@ -20,5 +20,6 @@ cc_binary(
         "main.cpp",
     ],
     deps = [":lib",],
+    data = ["resources/hit.wav"],
     linkopts = ["-framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL"]
 )
