@@ -3,12 +3,9 @@ struct GameData
 {
   enum BodyType
   {
-    TWALL = 0,
-    BWALL,
-    LWALL,
-    RWALL,
-    BALL,
+    BWALL = 0,
     BAT,
+    BALL,
     BRICK
   };
   /* data */

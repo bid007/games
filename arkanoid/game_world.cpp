@@ -3,6 +3,10 @@
 GameWorld::GameWorld(b2World *w)
 {
   world = w;
+  ground_id = new GameData(GameData::BWALL);
+  bat_id = new GameData(GameData::BAT);
+  ball_id = new GameData(GameData::BALL);
+  brick_id = new GameData(GameData::BRICK);
   create_game_box();
   create_ball();
   create_bat();
@@ -15,7 +19,10 @@ void GameWorld::create_game_box()
   b2Body *ground_body = world->CreateBody(&ground_body_def);
   b2PolygonShape ground_box;
   ground_box.SetAsBox(300.0f, 2.0f);
-  ground_body->CreateFixture(&ground_box, 0.0f);
+  b2FixtureDef fixture;
+  fixture.shape = &ground_box;
+  fixture.userData.pointer = (uintptr_t)ground_id;
+  ground_body->CreateFixture(&fixture);
   walls[0] = ground_body;
 
   b2BodyDef top_body_def;
@@ -41,7 +48,6 @@ void GameWorld::create_game_box()
   right_box.SetAsBox(2.0f, 200.0f);
   right_body->CreateFixture(&right_box, 0.0f);
   walls[3] = right_body;
-  // b2BodyUserData d = right_body->GetUserData();
 }
 
 void GameWorld::create_ball()
@@ -58,8 +64,7 @@ void GameWorld::create_ball()
   fixture_def.density = 0.009f;
   fixture_def.friction = 0.0f;
   fixture_def.restitution = 1.0f;
-  GameData *g = new GameData(GameData::BALL);
-  fixture_def.userData.pointer = (uintptr_t)g;
+  fixture_def.userData.pointer = (uintptr_t)ball_id;
   body->CreateFixture(&fixture_def);
   body->SetBullet(true);
   ball = body;
@@ -76,6 +81,7 @@ void GameWorld::create_bat()
   b2FixtureDef fixture;
   fixture.shape = &bat_box;
   fixture.density = 0.01f;
+  fixture.userData.pointer = (uintptr_t)bat_id;
   bat_body->CreateFixture(&fixture);
   bat = bat_body;
 }
@@ -121,13 +127,19 @@ void GameWorld::draw()
 
   // Draw Ball
   auto ball_pos = ball->GetPosition();
-  // std::cout << "Ball pos x: " << ball_pos.x << " pos y: " << ball_pos.y << std::endl;
   DrawCircle(ball_pos.x, ball_pos.y, 10.0f, MAROON);
   DrawCircleLines(ball_pos.x, ball_pos.y, 10.0f, WHITE);
 
   // Draw Bat
   auto bat_pos = bat->GetPosition();
-  // std::cout << "Bat pos x: " << bat_pos.x << " pos y: " << bat_pos.y << std::endl;
   DrawRectangleGradientH(bat_pos.x - 40, bat_pos.y - 10, 80, 20, MAGENTA, LIME);
   DrawRectangleLines(bat_pos.x - 40, bat_pos.y - 10, 80, 20, WHITE);
+}
+
+GameWorld::~GameWorld()
+{
+  delete ground_id;
+  delete bat_id;
+  delete ball_id;
+  delete brick_id;
 }

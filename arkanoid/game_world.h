@@ -13,6 +13,11 @@ class GameWorld
   b2Body *ball;
   b2Body *bat;
   b2World *world;
+  // Physics body gamedata
+  GameData *ground_id;
+  GameData *bat_id;
+  GameData *ball_id;
+  GameData *brick_id;
 
 public:
   GameWorld(b2World *w);
@@ -22,4 +27,5 @@ public:
   void apply_force_to_ball();
   void move_bat();
   void draw();
+  ~GameWorld();
 };

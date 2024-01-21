@@ -3,38 +3,35 @@
 
 class ArkanoidContactListner : public b2ContactListener
 {
+private:
+  bool illegal_collision = false;
+
 public:
-  inline bool is_ball(b2Fixture *fx)
+  bool game_end()
   {
-    return (fx->GetShape()->GetType() == b2Shape::e_circle);
-  }
-
-  inline bool is_wall(b2Fixture *fx)
-  {
-    return (fx->GetShape()->GetType() == b2Shape::e_polygon && fx->GetBody()->GetType() == b2BodyType::b2_staticBody);
-  }
-
-  inline bool is_bat(b2Fixture *fx)
-  {
-    return (fx->GetShape()->GetType() == b2Shape::e_polygon && fx->GetBody()->GetType() == b2BodyType::b2_dynamicBody);
+    return illegal_collision;
   }
 
   void BeginContact(b2Contact *contact)
   {
-    // std::cout << "Collison detected " << std::endl;
     auto fxa = contact->GetFixtureA();
     auto fxb = contact->GetFixtureB();
-    if (is_ball(fxa))
+
+    uintptr_t ptr_a = fxa->GetUserData().pointer;
+    uintptr_t ptr_b = fxb->GetUserData().pointer;
+
+    if (ptr_a == 0 || ptr_b == 0)
     {
-      uintptr_t d = fxa->GetUserData().pointer;
-      GameData *g = reinterpret_cast<GameData *>(d);
-      std::cout << "fxa Ball data is: " << g->type << std::endl;
+      return;
     }
-    if (is_ball(fxb))
+
+    GameData::BodyType body_a_type = reinterpret_cast<GameData *>(ptr_a)->type;
+    GameData::BodyType body_b_type = reinterpret_cast<GameData *>(ptr_b)->type;
+
+    // If one body type is 0 and other is 2, it must ball and ground
+    if ((body_a_type | body_b_type) == 2)
     {
-      uintptr_t d = fxb->GetUserData().pointer;
-      GameData *g = reinterpret_cast<GameData *>(d);
-      std::cout << "fxb Ball data is: " << g->type << std::endl;
+      illegal_collision = true;
     }
   }
 };

@@ -16,6 +16,7 @@ int main()
   ArkanoidContactListner *c_listener = new ArkanoidContactListner();
   b2World world(gravity);
   world.SetContactListener(c_listener);
+  // world.SetDestructionListener();
 
   constexpr float timeStep = 1.0f / 60.0f;
   constexpr int32 velocityIterations = 6;
@@ -25,7 +26,7 @@ int main()
   bool start = false;
   // -----------------------------------------
 
-  while (!WindowShouldClose())
+  while (!WindowShouldClose() && !c_listener->game_end())
   {
     // Update the world and its objects
     // -----------------------------------------
